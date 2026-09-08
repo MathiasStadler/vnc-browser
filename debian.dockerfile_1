@@ -4,7 +4,8 @@ FROM debian:stable-slim
 # Build arguments to set environment variables at build time
 ARG DEF_VNC_SCREEN=0
 ARG DEF_VNC_DISPLAY=0
-ARG DEF_VNC_RESOLUTION=1280x720
+#ARG DEF_VNC_RESOLUTION=1280x720
+ARG DEF_VNC_RESOLUTION=1929x1080
 ARG DEF_VNC_PASSWORD=money4band
 ARG DEF_VNC_PORT=5900
 ARG DEF_NOVNC_WEBSOCKIFY_PORT=6080
@@ -65,14 +66,29 @@ RUN set -e; \
     websockify \
     fluxbox \
     xterm \
+    wget \
     nano \
-    chromium && \
-    apt autoremove --purge -y && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/*
+    chromium \
+    unzip  \
+    && rm /etc/xrdp/rsakeys.ini /etc/xrdp/cert.pem /etc/xrdp/key.pem \
+    && rm --recursive --force /usr/share/doc && rm -Rf /usr/share/man \
+    && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled \
+    && rm -rf /var/lib/apt/lists/*
+
+# RUN chromium --version >chromium_version.txt && echo $(cat chromium_version.txt)
+
+RUN chromium --product-version >chromium_product_version.txt && echo $(cat chromium_product_version.txt)
+
+
+# RUN wget https://storage.googleapis.com/chrome-for-testing-public/151.0.7922.173/linux64/chromedriver-linux64.zip
+
+RUN wget https://storage.googleapis.com/chrome-for-testing-public/$(cat chromium_product_version.txt)/linux64/chromedriver-linux64.zip
+
+RUN unzip chromedriver-linux64.zip
 
 # Create necessary directories for supervisor and custom entrypoints
 RUN mkdir -p /etc/supervisor.d /app/conf.d ${DEF_CUSTOM_ENTRYPOINTS_DIR}
+RUN unzip -q /tmp/chromedriver-linux64.zip -d /usr/local/bin/chromedriver/ || true
 RUN mkdir -p /var/log/supervisor
 
 # Copy configuration files
@@ -80,6 +96,13 @@ COPY supervisord.conf /etc/supervisor.d/supervisord.conf
 COPY conf.d/ /app/conf.d/
 COPY base_entrypoint.sh customizable_entrypoint.sh /usr/local/bin/
 COPY browser_conf/chromium.conf /app/conf.d/
+# Copy chromedriver binary
+COPY chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+RUN chmod +x /usr/local/bin/chromedriver
+ENV PATH=/usr/local/bin:${PATH}
+# Copy chromedriver supervisor config
+COPY conf.d/chromedriver.conf /app/conf.d/chromedriver.conf
+
 
 # Make the entrypoint scripts executable
 RUN chmod +x /usr/local/bin/base_entrypoint.sh /usr/local/bin/customizable_entrypoint.sh

@@ -54,7 +54,7 @@ ENV DISPLAY=:${DEF_VNC_DISPLAY}.${DEF_VNC_SCREEN} \
 # Install necessary packages and setup noVNC
 RUN set -e; \
     apt update && \
-    apt full-upgrade -qqy && \
+    apt-get upgrade -qqy && \
     apt install -qqy \
     tini \
     supervisor \
@@ -66,7 +66,7 @@ RUN set -e; \
     fluxbox \
     xterm \
     nano \
-    chromium && \
+    chromium chromium-driver && \
     apt autoremove --purge -y && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*

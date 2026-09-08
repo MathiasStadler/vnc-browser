@@ -32,6 +32,19 @@ You can run it easily using its default or by passing the appropriate environmen
   docker run -d -p 5900:5900 -p 6080:6080 --name vnc-browser -e VNC_PASSWORD="mypassword" mrcolorrain/vnc-browser:debian
   ```
 
+  ### start local container
+  ```bash
+  # list avaible container
+  # docker start <container id >
+  docker start 2ca611eb2ab6
+  ```
+
+  ### Run local images(contzainer
+  ```bash
+  docker run -d -p 5900:5900 -p 6080:6080 --name vnc-browser -e VNC_PASSWORD="mypassword" vnc-browser
+  ```
+  
+
 - ### Docker Compose 🐳
   ```yaml
   version: "3.9"
