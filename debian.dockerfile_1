@@ -69,11 +69,11 @@ RUN set -e; \
     wget \
     nano \
     chromium \
-    unzip  \
-    && rm /etc/xrdp/rsakeys.ini /etc/xrdp/cert.pem /etc/xrdp/key.pem \
-    && rm --recursive --force /usr/share/doc && rm -Rf /usr/share/man \
-    && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled \
-    && rm -rf /var/lib/apt/lists/*
+    unzip  
+    # && rm /etc/xrdp/rsakeys.ini /etc/xrdp/cert.pem /etc/xrdp/key.pem \
+    # && rm --recursive --force /usr/share/doc && rm -Rf /usr/share/man \
+    # && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled \
+    # && rm -rf /var/lib/apt/lists/*
 
 # RUN chromium --version >chromium_version.txt && echo $(cat chromium_version.txt)
 
